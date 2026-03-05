@@ -29,7 +29,7 @@ export function Footer() {
         </div>
       </div>
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gold/20 text-center text-xs opacity-60 font-light tracking-wider">
-        &copy; {new Date().getFullYear()} LIGNOIR <span className="italic">by OmNexus</span>. Tüm hakları saklıdır.
+        &copy; {new Date().getFullYear()} LIGNOIR. Powered by <span className="text-gold font-semibold">OmNexus</span>. Tüm hakları saklıdır.
       </div>
     </footer>
   );

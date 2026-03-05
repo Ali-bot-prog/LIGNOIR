@@ -82,3 +82,33 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
 }
+
+model SiteContent {
+  id            Int     @id @default(1)
+  heroTitle     String  @default("")
+  heroSubtitle  String  @default("")
+  heroImage     String  @default("")
+  aboutBadge    String  @default("")
+  aboutTitle    String  @default("")
+  aboutText     String  @default("")
+  aboutImage    String  @default("")
+  footerAbout   String  @default("")
+  instagram     String  @default("")
+  linkedin      String  @default("")
+  contactEmail  String  @default("")
+  contactPhone  String  @default("")
+  contactAddress String @default("")
+  workingHours  String  @default("")
+  updatedAt     DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String    @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  read      Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
