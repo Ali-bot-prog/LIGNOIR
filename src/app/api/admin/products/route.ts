@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getProducts, addProduct } from '@/lib/cms';
 import { cookies } from 'next/headers';
-import * as jose from 'jose';
+import { jwtVerify } from 'jose';
 
 async function verifyAuth(req: Request) {
   const cookieStore = await cookies();
@@ -11,7 +11,7 @@ async function verifyAuth(req: Request) {
 
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret');
-    await jose.jwtVerify(token, secret);
+    await jwtVerify(token, secret);
     return true;
   } catch {
     return false;

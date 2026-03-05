@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { updateProduct, deleteProduct } from '@/lib/cms';
 import { cookies } from 'next/headers';
-import * as jose from 'jose';
+import { jwtVerify } from 'jose';
 
 async function verifyAuth(req: Request) {
   const cookieStore = await cookies();
@@ -11,7 +11,7 @@ async function verifyAuth(req: Request) {
 
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret');
-    await jose.jwtVerify(token, secret);
+    await jwtVerify(token, secret);
     return true;
   } catch {
     return false;
@@ -20,7 +20,7 @@ async function verifyAuth(req: Request) {
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const isAuth = await verifyAuth(req);
   if (!isAuth) {
@@ -28,8 +28,9 @@ export async function PUT(
   }
 
   try {
+    const resolvedParams = await params;
     const body = await req.json();
-    const updated = await updateProduct(params.id, body);
+    const updated = await updateProduct(resolvedParams.id, body);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Error updating product:', error);
@@ -39,7 +40,7 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const isAuth = await verifyAuth(req);
   if (!isAuth) {
@@ -47,7 +48,8 @@ export async function DELETE(
   }
 
   try {
-    await deleteProduct(params.id);
+    const resolvedParams = await params;
+    await deleteProduct(resolvedParams.id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting product:', error);

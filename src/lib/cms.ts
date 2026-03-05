@@ -3,6 +3,28 @@ import { join } from 'path';
 
 const dataDir = join(process.cwd(), 'src/data');
 
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  collection?: string;
+  featured?: boolean;
+  inStock?: boolean;
+  [key: string]: any;
+}
+
+interface Collection {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  featured?: boolean;
+  [key: string]: any;
+}
+
 export async function getSiteContent() {
   try {
     const contentPath = join(dataDir, 'site-content.json');
@@ -42,9 +64,9 @@ export async function addProduct(product: any) {
   return product;
 }
 
-export async function updateProduct(id: string, product: any) {
+export async function updateProduct(id: string, product: Partial<Product>) {
   const products = await getProducts();
-  const index = products.findIndex((p) => p.id === id);
+  const index = products.findIndex((p: Product) => p.id === id);
   if (index === -1) throw new Error('Ürün bulunamadı');
   products[index] = { ...products[index], ...product };
   await updateProducts(products);
@@ -53,7 +75,7 @@ export async function updateProduct(id: string, product: any) {
 
 export async function deleteProduct(id: string) {
   const products = await getProducts();
-  const filtered = products.filter((p) => p.id !== id);
+  const filtered = products.filter((p: Product) => p.id !== id);
   await updateProducts(filtered);
 }
 
@@ -67,22 +89,23 @@ export async function getCollections() {
   }
 }
 
-export async function updateCollections(collections: any[]) {
+export async function updateCollections(collections: Collection[]) {
   const collectionsPath = join(dataDir, 'collections.json');
   writeFileSync(collectionsPath, JSON.stringify(collections, null, 2), 'utf-8');
   return collections;
 }
 
-export async function addCollection(collection: any) {
+export async function addCollection(collection: Omit<Collection, 'id'>) {
   const collections = await getCollections();
-  collections.push({ id: Date.now().toString(), ...collection });
+  const newCollection = { id: Date.now().toString(), ...collection };
+  collections.push(newCollection);
   await updateCollections(collections);
-  return collection;
+  return newCollection;
 }
 
-export async function updateCollection(id: string, collection: any) {
+export async function updateCollection(id: string, collection: Partial<Collection>) {
   const collections = await getCollections();
-  const index = collections.findIndex((c) => c.id === id);
+  const index = collections.findIndex((c: Collection) => c.id === id);
   if (index === -1) throw new Error('Koleksiyon bulunamadı');
   collections[index] = { ...collections[index], ...collection };
   await updateCollections(collections);
@@ -91,6 +114,6 @@ export async function updateCollection(id: string, collection: any) {
 
 export async function deleteCollection(id: string) {
   const collections = await getCollections();
-  const filtered = collections.filter((c) => c.id !== id);
+  const filtered = collections.filter((c: Collection) => c.id !== id);
   await updateCollections(filtered);
 }

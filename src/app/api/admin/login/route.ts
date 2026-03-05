@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import * as jose from 'jose';
+import { SignJWT } from 'jose';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@lignoir.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret');
-    const token = await jose.SignJWT({ email })
+    const token = await new SignJWT({ email })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('7d')
       .sign(secret);
